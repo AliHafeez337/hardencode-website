@@ -73,34 +73,30 @@ Draw-Segments $og[1] (Wordmark-Segments 118) 600 315
 $og[0].Save((Join-Path $icons "og-image.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $og[1].Dispose(); $og[0].Dispose()
 
-function Monogram([int]$px) {
+function BlueDot([int]$px) {
     $c = New-Canvas $px $px
-    $size = [float]($px * 0.52)
-    $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
-    $segs = @(
-        @{ Text = "h"; Font = $sgBold; Color = $light },
-        @{ Text = $middot; Font = $sgBold; Color = $blue },
-        @{ Text = "c"; Font = $sgBold; Color = $light }
-    )
-    Draw-Segments $c[1] $segs ($px / 2) ($px / 2)
+    $radius = [float]($px * 0.22)
+    $brush = New-Object System.Drawing.SolidBrush($blue)
+    $c[1].FillEllipse($brush, ($px / 2 - $radius), ($px / 2 - $radius), ($radius * 2), ($radius * 2))
+    $brush.Dispose()
     return $c
 }
 
-$touch = Monogram 180
+$touch = BlueDot 180
 $touch[0].Save((Join-Path $icons "apple-touch-icon.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $touch[1].Dispose(); $touch[0].Dispose()
 
-$png192 = Monogram 192
+$png192 = BlueDot 192
 $png192[0].Save((Join-Path $icons "icon-192.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $png192[1].Dispose(); $png192[0].Dispose()
 
-$png512 = Monogram 512
+$png512 = BlueDot 512
 $png512[0].Save((Join-Path $icons "icon-512.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $png512[1].Dispose(); $png512[0].Dispose()
 
 $pngBytesList = @()
 foreach ($px in @(16, 32, 48)) {
-    $m = Monogram $px
+    $m = BlueDot $px
     $ms = New-Object System.IO.MemoryStream
     $m[0].Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
     $pngBytesList += , @{ Size = $px; Bytes = $ms.ToArray() }
