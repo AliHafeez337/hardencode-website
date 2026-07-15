@@ -73,86 +73,18 @@ Draw-Segments $og[1] (Wordmark-Segments 118) 600 315
 $og[0].Save((Join-Path $icons "og-image.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $og[1].Dispose(); $og[0].Dispose()
 
-function Get-MonogramLayout([int]$px, $g, $sgBold, $format) {
-    $size = [float]($px * 0.52)
-    $dotSlot = $g.MeasureString($middot, $sgBold, [int]::MaxValue, $format)
-    $hSize = $g.MeasureString("h", $sgBold, [int]::MaxValue, $format)
-    $cSize = $g.MeasureString("c", $sgBold, [int]::MaxValue, $format)
-    $total = $hSize.Width + $dotSlot.Width + $cSize.Width
-    $hX = ($px / 2) - ($total / 2)
-    $centerY = $px / 2
-    $dotDiameter = [Math]::Max([float]($size * 0.26), [float]($px * 0.18))
-    $dotDiameter = [Math]::Min($dotDiameter, $dotSlot.Width)
-    $dotX = $hX + $hSize.Width + ($dotSlot.Width - $dotDiameter) / 2
-    $dotY = $centerY - ($dotDiameter / 2)
-    $cX = $hX + $hSize.Width + $dotSlot.Width
-    $ringPad = [Math]::Max(1.0, [float]($px * 0.05))
-    return @{
-        Size = $size
-        CenterY = $centerY
-        H = @{ X = $hX; Y = $centerY - ($hSize.Height / 2); Height = $hSize.Height }
-        Dot = @{ X = $dotX; Y = $dotY; D = $dotDiameter; Ring = $ringPad }
-        C = @{ X = $cX; Y = $centerY - ($cSize.Height / 2); Height = $cSize.Height }
-    }
-}
-
-function Draw-AccentDot($g, $dotX, $dotY, $dotDiameter, $ringPad) {
-    $outerD = $dotDiameter + ($ringPad * 2)
-    $ringBrush = New-Object System.Drawing.SolidBrush($light)
-    $g.FillEllipse($ringBrush, ($dotX - $ringPad), ($dotY - $ringPad), $outerD, $outerD)
-    $ringBrush.Dispose()
-    $blueBrush = New-Object System.Drawing.SolidBrush($blue)
-    $g.FillEllipse($blueBrush, $dotX, $dotY, $dotDiameter, $dotDiameter)
-    $blueBrush.Dispose()
-}
-
 function Monogram([int]$px) {
     $c = New-Canvas $px $px
     $size = [float]($px * 0.52)
     $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
-    $format = New-Object System.Drawing.StringFormat([System.Drawing.StringFormat]::GenericTypographic)
-    $format.FormatFlags = $format.FormatFlags -bor [System.Drawing.StringFormatFlags]::MeasureTrailingSpaces
-    $layout = Get-MonogramLayout $px $c[1] $sgBold $format
-
-    $lightBrush = New-Object System.Drawing.SolidBrush($light)
-    $c[1].DrawString("h", $sgBold, $lightBrush, $layout.H.X, $layout.H.Y, $format)
-    Draw-AccentDot $c[1] $layout.Dot.X $layout.Dot.Y $layout.Dot.D $layout.Dot.Ring
-    $c[1].DrawString("c", $sgBold, $lightBrush, $layout.C.X, $layout.C.Y, $format)
-    $lightBrush.Dispose()
+    $segs = @(
+        @{ Text = "h"; Font = $sgBold; Color = $light },
+        @{ Text = $middot; Font = $sgBold; Color = $blue },
+        @{ Text = "c"; Font = $sgBold; Color = $light }
+    )
+    Draw-Segments $c[1] $segs ($px / 2) ($px / 2)
     $sgBold.Dispose()
     return $c
-}
-
-function Write-FaviconSvg([string]$path) {
-    $px = 64
-    $size = [float]($px * 0.52)
-    $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
-    $format = New-Object System.Drawing.StringFormat([System.Drawing.StringFormat]::GenericTypographic)
-    $format.FormatFlags = $format.FormatFlags -bor [System.Drawing.StringFormatFlags]::MeasureTrailingSpaces
-    $measureBmp = New-Object System.Drawing.Bitmap(1, 1)
-    $measureG = [System.Drawing.Graphics]::FromImage($measureBmp)
-    $layout = Get-MonogramLayout $px $measureG $sgBold $format
-    $baselineY = [Math]::Round($layout.CenterY + ($layout.Size * 0.33), 1)
-    $fontSize = [Math]::Round($layout.Size, 1)
-    $dot = $layout.Dot
-    $ringR = [Math]::Round(($dot.D / 2) + $dot.Ring, 1)
-    $dotR = [Math]::Round($dot.D / 2, 1)
-    $dotCx = [Math]::Round($dot.X + ($dot.D / 2), 1)
-    $dotCy = [Math]::Round($layout.CenterY, 1)
-
-    $svg = @"
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#0f172a"/>
-  <text x="$([Math]::Round($layout.H.X, 1))" y="$baselineY" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-weight="700" font-size="$fontSize" fill="#e2e8f0">h</text>
-  <circle cx="$dotCx" cy="$dotCy" r="$ringR" fill="#e2e8f0"/>
-  <circle cx="$dotCx" cy="$dotCy" r="$dotR" fill="#3b82f6"/>
-  <text x="$([Math]::Round($layout.C.X, 1))" y="$baselineY" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-weight="700" font-size="$fontSize" fill="#e2e8f0">c</text>
-</svg>
-"@
-    [System.IO.File]::WriteAllText($path, $svg.TrimStart(), [System.Text.UTF8Encoding]::new($false))
-    $measureG.Dispose()
-    $measureBmp.Dispose()
-    $sgBold.Dispose()
 }
 
 $touch = Monogram 180
@@ -199,8 +131,6 @@ foreach ($entry in $pngBytesList) {
 $writer.Flush()
 [System.IO.File]::WriteAllBytes((Join-Path $icons "favicon.ico"), $icoStream.ToArray())
 $writer.Dispose(); $icoStream.Dispose()
-
-Write-FaviconSvg (Join-Path $icons "favicon.svg")
 
 Write-Output "Icons written:"
 Get-ChildItem $icons | Select-Object Name, Length
