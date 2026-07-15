@@ -29,7 +29,7 @@
     }
     var frame = document.createElement("iframe");
     frame.src = url;
-    frame.title = "Book a free 20 minute security snapshot call";
+    frame.title = "Book a free 30 minute security snapshot call";
     frame.loading = "lazy";
     frame.setAttribute("allow", "fullscreen");
     booking.appendChild(frame);
