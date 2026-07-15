@@ -50,9 +50,4 @@
   } else {
     loadBooking();
   }
-
-  var bookButton = document.getElementById("book-btn");
-  if (bookButton) {
-    bookButton.addEventListener("click", loadBooking);
-  }
 })();
