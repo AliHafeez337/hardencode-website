@@ -30,6 +30,7 @@
     var frame = document.createElement("iframe");
     frame.src = url;
     frame.title = "Book a free 20 minute security snapshot call";
+    frame.referrerPolicy = "strict-origin-when-cross-origin";
     frame.loading = "lazy";
     frame.setAttribute("allow", "fullscreen");
     booking.appendChild(frame);
