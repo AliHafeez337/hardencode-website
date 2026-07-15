@@ -213,7 +213,7 @@ strong {
 }
 
 .hero {
-  padding: 3.25rem 0 3rem;
+  padding: 6.5rem 0 5.5rem;
   background:
     radial-gradient(ellipse 70% 55% at 75% 10%, rgba(59, 130, 246, 0.14), transparent),
     var(--navy);
@@ -259,8 +259,8 @@ strong {
 }
 
 .term-body {
-  padding: 0.9rem 1.2rem 1rem;
-  line-height: 1.85;
+  padding: 1.1rem 1.2rem 1.3rem;
+  line-height: 2;
 }
 
 .term-body p {
@@ -318,16 +318,16 @@ strong {
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 4.4vw, 3.2rem);
+  font-size: clamp(2.3rem, 6vw, 4rem);
   color: var(--offwhite);
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.25rem;
 }
 
 .hero-sub {
   font-size: 1.2rem;
   color: var(--muted);
   max-width: 38rem;
-  margin-bottom: 1.9rem;
+  margin-bottom: 2.25rem;
 }
 
 .hero-sub strong {
