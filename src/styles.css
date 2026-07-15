@@ -463,42 +463,47 @@ section h2 {
 }
 
 .proof {
-  background: var(--navy);
+  background: var(--offwhite);
+  color: var(--navy);
   padding: 5rem 0;
 }
 
 .proof h2 {
-  color: var(--offwhite);
+  color: var(--navy);
 }
 
 .proof-grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1rem 2rem;
-  font-size: 1.05rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.1rem 1.5rem;
+  font-size: 1.02rem;
 }
 
 .proof-grid li {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.6rem;
-  color: var(--light);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  color: var(--navy);
 }
 
 .proof-grid li strong {
-  color: var(--offwhite);
+  color: var(--navy);
 }
 
 .founder-note {
   margin-top: 2.25rem;
-  color: var(--muted);
+  color: #475569;
   font-size: 1rem;
   max-width: 46rem;
 }
 
 .founder-note strong {
-  color: var(--light);
+  color: var(--navy);
 }
 
 .check {
