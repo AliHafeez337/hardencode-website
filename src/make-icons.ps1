@@ -25,6 +25,7 @@ $navy = [System.Drawing.ColorTranslator]::FromHtml("#0f172a")
 $light = [System.Drawing.ColorTranslator]::FromHtml("#e2e8f0")
 $mutedC = [System.Drawing.ColorTranslator]::FromHtml("#94a3b8")
 $blue = [System.Drawing.ColorTranslator]::FromHtml("#3b82f6")
+$iconBg = [System.Drawing.ColorTranslator]::FromHtml("#f8fafc")
 
 function New-Canvas([int]$w, [int]$h) {
     $bmp = New-Object System.Drawing.Bitmap($w, $h)
@@ -75,12 +76,13 @@ $og[1].Dispose(); $og[0].Dispose()
 
 function Monogram([int]$px) {
     $c = New-Canvas $px $px
+    $c[1].Clear($iconBg)
     $size = [float]($px * 0.52)
     $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
     $segs = @(
-        @{ Text = "h"; Font = $sgBold; Color = $light },
+        @{ Text = "h"; Font = $sgBold; Color = $navy },
         @{ Text = $middot; Font = $sgBold; Color = $blue },
-        @{ Text = "c"; Font = $sgBold; Color = $light }
+        @{ Text = "c"; Font = $sgBold; Color = $navy }
     )
     Draw-Segments $c[1] $segs ($px / 2) ($px / 2)
     $sgBold.Dispose()
