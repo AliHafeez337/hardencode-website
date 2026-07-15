@@ -78,23 +78,65 @@ function Monogram([int]$px) {
     $size = [float]($px * 0.52)
     $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
     $format = New-Object System.Drawing.StringFormat([System.Drawing.StringFormat]::GenericTypographic)
+    $format.FormatFlags = $format.FormatFlags -bor [System.Drawing.StringFormatFlags]::MeasureTrailingSpaces
+
+    $dotSlot = $c[1].MeasureString($middot, $sgBold, [int]::MaxValue, $format)
     $hSize = $c[1].MeasureString("h", $sgBold, [int]::MaxValue, $format)
     $cSize = $c[1].MeasureString("c", $sgBold, [int]::MaxValue, $format)
-    $dotRadius = [float]($px * 0.09)
-    $dotGap = [float]($px * 0.08)
-    $total = $hSize.Width + $dotGap + ($dotRadius * 2) + $dotGap + $cSize.Width
-    $x = ($px / 2) - ($total / 2)
+    $total = $hSize.Width + $dotSlot.Width + $cSize.Width
+    $hX = ($px / 2) - ($total / 2)
     $centerY = $px / 2
+    $dotDiameter = [Math]::Min($dotSlot.Width * 0.85, [float]($size * 0.32))
+    $dotX = $hX + $hSize.Width + ($dotSlot.Width - $dotDiameter) / 2
+    $cX = $hX + $hSize.Width + $dotSlot.Width
+
     $lightBrush = New-Object System.Drawing.SolidBrush($light)
-    $c[1].DrawString("h", $sgBold, $lightBrush, $x, ($centerY - ($hSize.Height / 2)), $format)
-    $x += $hSize.Width + $dotGap
+    $c[1].DrawString("h", $sgBold, $lightBrush, $hX, ($centerY - ($hSize.Height / 2)), $format)
     $blueBrush = New-Object System.Drawing.SolidBrush($blue)
-    $c[1].FillEllipse($blueBrush, $x, ($centerY - $dotRadius), ($dotRadius * 2), ($dotRadius * 2))
-    $x += ($dotRadius * 2) + $dotGap
-    $c[1].DrawString("c", $sgBold, $lightBrush, $x, ($centerY - ($cSize.Height / 2)), $format)
+    $c[1].FillEllipse($blueBrush, $dotX, ($centerY - ($dotDiameter / 2)), $dotDiameter, $dotDiameter)
+    $c[1].DrawString("c", $sgBold, $lightBrush, $cX, ($centerY - ($cSize.Height / 2)), $format)
     $lightBrush.Dispose()
     $blueBrush.Dispose()
+    $sgBold.Dispose()
     return $c
+}
+
+function Write-FaviconSvg([string]$path) {
+    $px = 64
+    $size = [float]($px * 0.52)
+    $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
+    $format = New-Object System.Drawing.StringFormat([System.Drawing.StringFormat]::GenericTypographic)
+    $format.FormatFlags = $format.FormatFlags -bor [System.Drawing.StringFormatFlags]::MeasureTrailingSpaces
+    $measureBmp = New-Object System.Drawing.Bitmap(1, 1)
+    $measureG = [System.Drawing.Graphics]::FromImage($measureBmp)
+
+    $dotSlot = $measureG.MeasureString($middot, $sgBold, [int]::MaxValue, $format)
+    $hSize = $measureG.MeasureString("h", $sgBold, [int]::MaxValue, $format)
+    $cSize = $measureG.MeasureString("c", $sgBold, [int]::MaxValue, $format)
+    $total = $hSize.Width + $dotSlot.Width + $cSize.Width
+    $hX = ($px / 2) - ($total / 2)
+    $centerY = $px / 2
+    $dotDiameter = [Math]::Min($dotSlot.Width * 0.85, [float]($size * 0.32))
+    $dotX = $hX + $hSize.Width + ($dotSlot.Width - $dotDiameter) / 2
+    $cX = $hX + $hSize.Width + $dotSlot.Width
+    $baselineY = [Math]::Round($centerY + ($size * 0.33), 1)
+    $fontSize = [Math]::Round($size, 1)
+    $dotCx = [Math]::Round($dotX + ($dotDiameter / 2), 1)
+    $dotCy = [Math]::Round($centerY, 1)
+    $dotR = [Math]::Round($dotDiameter / 2, 1)
+
+    $svg = @"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#0f172a"/>
+  <text x="$([Math]::Round($hX, 1))" y="$baselineY" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-weight="700" font-size="$fontSize" fill="#e2e8f0">h</text>
+  <circle cx="$dotCx" cy="$dotCy" r="$dotR" fill="#3b82f6"/>
+  <text x="$([Math]::Round($cX, 1))" y="$baselineY" font-family="'Space Grotesk','Segoe UI',Arial,sans-serif" font-weight="700" font-size="$fontSize" fill="#e2e8f0">c</text>
+</svg>
+"@
+    [System.IO.File]::WriteAllText($path, $svg.TrimStart(), [System.Text.UTF8Encoding]::new($false))
+    $measureG.Dispose()
+    $measureBmp.Dispose()
+    $sgBold.Dispose()
 }
 
 $touch = Monogram 180
@@ -141,6 +183,8 @@ foreach ($entry in $pngBytesList) {
 $writer.Flush()
 [System.IO.File]::WriteAllBytes((Join-Path $icons "favicon.ico"), $icoStream.ToArray())
 $writer.Dispose(); $icoStream.Dispose()
+
+Write-FaviconSvg (Join-Path $icons "favicon.svg")
 
 Write-Output "Icons written:"
 Get-ChildItem $icons | Select-Object Name, Length
