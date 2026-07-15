@@ -73,30 +73,45 @@ Draw-Segments $og[1] (Wordmark-Segments 118) 600 315
 $og[0].Save((Join-Path $icons "og-image.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $og[1].Dispose(); $og[0].Dispose()
 
-function BlueDot([int]$px) {
+function Monogram([int]$px) {
     $c = New-Canvas $px $px
-    $radius = [float]($px * 0.22)
-    $brush = New-Object System.Drawing.SolidBrush($blue)
-    $c[1].FillEllipse($brush, ($px / 2 - $radius), ($px / 2 - $radius), ($radius * 2), ($radius * 2))
-    $brush.Dispose()
+    $size = [float]($px * 0.52)
+    $sgBold = New-Object System.Drawing.Font($sgFamily, $size, [System.Drawing.FontStyle]::Bold, [System.Drawing.GraphicsUnit]::Pixel)
+    $format = New-Object System.Drawing.StringFormat([System.Drawing.StringFormat]::GenericTypographic)
+    $hSize = $c[1].MeasureString("h", $sgBold, [int]::MaxValue, $format)
+    $cSize = $c[1].MeasureString("c", $sgBold, [int]::MaxValue, $format)
+    $dotRadius = [float]($px * 0.09)
+    $dotGap = [float]($px * 0.08)
+    $total = $hSize.Width + $dotGap + ($dotRadius * 2) + $dotGap + $cSize.Width
+    $x = ($px / 2) - ($total / 2)
+    $centerY = $px / 2
+    $lightBrush = New-Object System.Drawing.SolidBrush($light)
+    $c[1].DrawString("h", $sgBold, $lightBrush, $x, ($centerY - ($hSize.Height / 2)), $format)
+    $x += $hSize.Width + $dotGap
+    $blueBrush = New-Object System.Drawing.SolidBrush($blue)
+    $c[1].FillEllipse($blueBrush, $x, ($centerY - $dotRadius), ($dotRadius * 2), ($dotRadius * 2))
+    $x += ($dotRadius * 2) + $dotGap
+    $c[1].DrawString("c", $sgBold, $lightBrush, $x, ($centerY - ($cSize.Height / 2)), $format)
+    $lightBrush.Dispose()
+    $blueBrush.Dispose()
     return $c
 }
 
-$touch = BlueDot 180
+$touch = Monogram 180
 $touch[0].Save((Join-Path $icons "apple-touch-icon.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $touch[1].Dispose(); $touch[0].Dispose()
 
-$png192 = BlueDot 192
+$png192 = Monogram 192
 $png192[0].Save((Join-Path $icons "icon-192.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $png192[1].Dispose(); $png192[0].Dispose()
 
-$png512 = BlueDot 512
+$png512 = Monogram 512
 $png512[0].Save((Join-Path $icons "icon-512.png"), [System.Drawing.Imaging.ImageFormat]::Png)
 $png512[1].Dispose(); $png512[0].Dispose()
 
 $pngBytesList = @()
 foreach ($px in @(16, 32, 48)) {
-    $m = BlueDot $px
+    $m = Monogram $px
     $ms = New-Object System.IO.MemoryStream
     $m[0].Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
     $pngBytesList += , @{ Size = $px; Bytes = $ms.ToArray() }
