@@ -46,6 +46,23 @@ Non-secret defaults (`CONTACT_TO`, `CONTACT_FROM`) also live in `wrangler.jsonc`
 
 For local `wrangler dev`, copy `.dev.vars.example` to `.dev.vars` and paste your key.
 
+**Receiving mail in Gmail:** Resend delivers to `hello@hardencode.com`. Forward that address with Cloudflare **Email Routing** to your personal Gmail, or you will not see form submissions in Gmail even when the API returns `ok: true`.
+
+**Reply-To:** the Worker sets `replyTo` to the visitor's email so Reply in your inbox goes to the client.
+
+## Page anchors
+
+| Hash | Lands on |
+|---|---|
+| `#contact` | Contact section (nav + hero primary CTA) |
+| `#consultation` | Same section (kept for older links) |
+
+## Contact UX (live)
+
+- Hero: **Send a quick query** → `#contact`, plus **Book a short consultation** (opens Koalendar modal).
+- Contact: form first; secondary **Book a short consultation** button opens the modal (iframe loads only then).
+- Koalendar panel colors are controlled in the Koalendar dashboard (not site CSS; iframe is cross-origin).
+
 ## Editing
 
 Edit `src/styles.css` or `src/script.js`, then rebuild the minified files:
@@ -55,4 +72,4 @@ npx esbuild src/styles.css --minify --outfile=styles.min.css
 npx esbuild src/script.js --minify --outfile=script.min.js
 ```
 
-Every push to `main` deploys automatically through Cloudflare Pages.
+Every push to `main` deploys automatically through the Cloudflare Workers Git integration.
