@@ -233,7 +233,7 @@
   <section class="contact" id="consultation">
     <div class="container container-narrow">
       <h2>Ready to harden your stack?</h2>
-      <p class="contact-lead">Send a quick query. No call required.</p>
+      <p class="contact-lead">Send a quick query.</p>
       <form class="query-form" id="query-form" action="/api/contact" method="post" novalidate>
         <div class="hp" aria-hidden="true">
           <label for="company">Company</label>
@@ -254,10 +254,10 @@
         <button type="submit" class="btn btn-primary btn-block" id="query-submit">Send query</button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
-      <p class="contact-alt">
-        Prefer a live call?
-        <button type="button" class="text-link js-open-booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">Book a short consultation</button>
-      </p>
+      <div class="contact-secondary">
+        <p class="contact-or">Or talk it through live</p>
+        <button type="button" class="btn btn-ghost btn-block js-open-booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">Book a short consultation</button>
+      </div>
     </div>
   </section>
 

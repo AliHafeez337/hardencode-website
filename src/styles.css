@@ -707,10 +707,22 @@ section h2 {
   color: #f87171;
 }
 
-.contact-alt {
-  margin-top: 1.75rem;
-  color: var(--muted);
-  font-size: 0.95rem;
+.contact-secondary {
+  margin-top: 2rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.contact-or {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--light);
+  margin-bottom: 0.85rem;
+}
+
+.contact-secondary .btn-ghost {
+  width: 100%;
 }
 
 .booking-modal {
