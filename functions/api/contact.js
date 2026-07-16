@@ -1,14 +1,11 @@
 /**
- * POST /api/contact
- * Same-origin contact form handler. Relays to Resend.
+ * POST /api/contact — relays form submissions to Resend.
  *
- * Cloudflare Pages env (Settings → Environment variables, encrypt):
+ * Cloudflare secrets (Settings → Variables and Secrets):
  *   RESEND_API_KEY  — from https://resend.com
- * Optional:
+ * Optional plain vars:
  *   CONTACT_TO      — default hello@hardencode.com
  *   CONTACT_FROM    — default Hardencode <onboarding@resend.dev>
- *                     After verifying hardencode.com in Resend, set e.g.
- *                     Hardencode <hello@hardencode.com>
  */
 
 const MAX = { name: 100, email: 200, query: 4000 };
@@ -56,9 +53,13 @@ async function readBody(request) {
   return null;
 }
 
-export async function onRequestPost(context) {
-  var env = context.env;
-  var request = context.request;
+export async function handleContact(request, env) {
+  if (request.method === "GET" || request.method === "HEAD") {
+    return json({ ok: false, error: "Method not allowed." }, 405);
+  }
+  if (request.method !== "POST") {
+    return json({ ok: false, error: "Method not allowed." }, 405);
+  }
 
   var data;
   try {
@@ -142,6 +143,11 @@ export async function onRequestPost(context) {
   }
 
   return json({ ok: true });
+}
+
+/** Pages Functions compatibility (if the project is ever deployed that way). */
+export async function onRequestPost(context) {
+  return handleContact(context.request, context.env);
 }
 
 export async function onRequestGet() {

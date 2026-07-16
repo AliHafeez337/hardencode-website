@@ -1,7 +1,14 @@
 .git
 .gitignore
 .wrangler
+.devtools
+.dev.vars
 wrangler.jsonc
+wrangler.toml
 node_modules
 src
 README.md
+worker.js
+functions
+package.json
+package-lock.json
