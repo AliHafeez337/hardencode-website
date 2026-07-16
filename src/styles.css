@@ -344,28 +344,34 @@ strong {
 }
 
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 1rem;
+  line-height: 1.25;
   text-decoration: none;
   border-radius: 8px;
+  border: 1px solid transparent;
   padding: 0.85rem 1.6rem;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .btn-primary {
   background: var(--blue-deep);
+  border-color: var(--blue-deep);
   color: #fff;
 }
 
 .btn-primary:hover {
   background: var(--blue-bright);
+  border-color: var(--blue-bright);
   color: var(--navy);
 }
 
 .btn-ghost {
-  border: 1px solid var(--border);
+  border-color: var(--border);
   color: var(--light);
   background: transparent;
   cursor: pointer;
@@ -390,8 +396,6 @@ strong {
 
 .btn-block {
   width: 100%;
-  text-align: center;
-  border: 0;
   cursor: pointer;
 }
 
@@ -732,7 +736,7 @@ section h2 {
   border: 1px solid var(--border);
   padding: 0;
   width: min(26rem, calc(100vw - 1.5rem));
-  height: min(34rem, calc(100dvh - 2rem));
+  height: min(calc(34rem + 100px), calc(100dvh - 2rem));
   max-width: calc(100vw - 1.5rem);
   max-height: calc(100dvh - 2rem);
   background: var(--slate);
@@ -912,6 +916,6 @@ section h2 {
 
   .booking-modal {
     width: calc(100vw - 1rem);
-    height: min(34rem, calc(100dvh - 1rem));
+    height: min(calc(34rem + 100px), calc(100dvh - 1rem));
   }
 }
