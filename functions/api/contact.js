@@ -100,7 +100,7 @@ export async function handleContact(request, env) {
   }
 
   var to = env.CONTACT_TO || "hello@hardencode.com";
-  var from = env.CONTACT_FROM || "Hardencode <onboarding@resend.dev>";
+  var from = env.CONTACT_FROM || "Hardencode <hello@hardencode.com>";
   var subject = "Hardencode query from " + name;
   var text =
     "Name: " + name + "\n" +
@@ -135,10 +135,22 @@ export async function handleContact(request, env) {
 
   if (!resendRes.ok) {
     var detail = "";
+    var resendMessage = "";
     try {
       detail = await resendRes.text();
+      var parsed = JSON.parse(detail);
+      resendMessage = (parsed && (parsed.message || (parsed.error && parsed.error.message))) || "";
     } catch (e) {}
     console.error("Resend error", resendRes.status, detail);
+
+    // Surface Resend's own message so domain/from misconfig is obvious in the browser network tab.
+    if (resendMessage) {
+      return json({
+        ok: false,
+        error: "Could not send your query. Try again or email hello@hardencode.com.",
+        reason: resendMessage,
+      }, 502);
+    }
     return json({ ok: false, error: "Could not send your query. Try again or email hello@hardencode.com." }, 502);
   }
 

@@ -30,17 +30,17 @@ Order matters: the Worker must be deployed before Cloudflare allows runtime secr
    - `RESEND_API_KEY` (Secret)
 5. Deploy once more so the Worker picks up the secret.
 
-**Important Resend limit:** `onboarding@resend.dev` can only send to the email address on your Resend account. Sending to `hello@hardencode.com` fails with a 502 until you verify the domain.
+**Important:** every git deploy applies `CONTACT_FROM` / `CONTACT_TO` from `wrangler.jsonc`. Leaving `onboarding@resend.dev` there overwrites dashboard vars on each push.
 
-**Production setup (do this):**
+**Production setup (required for `hello@hardencode.com`):**
 1. Resend → [Domains](https://resend.com/domains) → add `hardencode.com` → add the DNS records Resend shows (in Cloudflare DNS).
-2. Wait until the domain status is **Verified**.
-3. In Cloudflare Worker vars, set:
-   - `CONTACT_FROM` = `Hardencode <hello@hardencode.com>` (or `noreply@hardencode.com`)
-   - `CONTACT_TO` = `hello@hardencode.com` (or keep the wrangler default)
-4. Redeploy / save vars, then test the form again.
+2. Wait until the domain status is **Verified** (not Pending).
+3. Confirm vars are:
+   - `CONTACT_FROM` = `Hardencode <hello@hardencode.com>`
+   - `CONTACT_TO` = `hello@hardencode.com`
+4. Redeploy, then test again. Failed responses include a `reason` field with Resend's exact error.
 
-**Quick test without domain verify:** set `CONTACT_TO` to the exact email you used to sign up for Resend (only that inbox can receive while still on `onboarding@resend.dev`).
+**Quick test without domain verify:** temporarily set `CONTACT_FROM` back to `Hardencode <onboarding@resend.dev>` and `CONTACT_TO` to the exact email on your Resend account.
 
 Non-secret defaults (`CONTACT_TO`, `CONTACT_FROM`) also live in `wrangler.jsonc` under `vars`. The Resend key stays a dashboard secret — never put it in `wrangler.jsonc`.
 

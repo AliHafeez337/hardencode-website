@@ -10,7 +10,7 @@
   },
   "vars": {
     "CONTACT_TO": "hello@hardencode.com",
-    "CONTACT_FROM": "Hardencode <onboarding@resend.dev>"
+    "CONTACT_FROM": "Hardencode <hello@hardencode.com>"
   },
   "secrets": {
     "required": ["RESEND_API_KEY"]
