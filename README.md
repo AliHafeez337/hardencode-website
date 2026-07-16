@@ -30,11 +30,21 @@ Order matters: the Worker must be deployed before Cloudflare allows runtime secr
    - `RESEND_API_KEY` (Secret)
 5. Deploy once more so the Worker picks up the secret.
 
-Non-secret defaults (`CONTACT_TO`, `CONTACT_FROM`) live in `wrangler.jsonc` under `vars`. The Resend key is declared there as `secrets.required` and must stay a dashboard/CLI secret — never put it in `wrangler.jsonc`.
+**Important Resend limit:** `onboarding@resend.dev` can only send to the email address on your Resend account. Sending to `hello@hardencode.com` fails with a 502 until you verify the domain.
+
+**Production setup (do this):**
+1. Resend → [Domains](https://resend.com/domains) → add `hardencode.com` → add the DNS records Resend shows (in Cloudflare DNS).
+2. Wait until the domain status is **Verified**.
+3. In Cloudflare Worker vars, set:
+   - `CONTACT_FROM` = `Hardencode <hello@hardencode.com>` (or `noreply@hardencode.com`)
+   - `CONTACT_TO` = `hello@hardencode.com` (or keep the wrangler default)
+4. Redeploy / save vars, then test the form again.
+
+**Quick test without domain verify:** set `CONTACT_TO` to the exact email you used to sign up for Resend (only that inbox can receive while still on `onboarding@resend.dev`).
+
+Non-secret defaults (`CONTACT_TO`, `CONTACT_FROM`) also live in `wrangler.jsonc` under `vars`. The Resend key stays a dashboard secret — never put it in `wrangler.jsonc`.
 
 For local `wrangler dev`, copy `.dev.vars.example` to `.dev.vars` and paste your key.
-
-Until `RESEND_API_KEY` is set, the form returns a clear error and visitors can still use email or the booking modal.
 
 ## Editing
 
