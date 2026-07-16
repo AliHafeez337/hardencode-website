@@ -98,7 +98,11 @@
         <p class="hero-kicker">pentest &rarr; harden &rarr; ship</p>
         <h1>Pentest your stack.<br>Harden your code.</h1>
         <p class="hero-sub">Hardencode pairs <strong>offensive security insight</strong> with <strong>senior engineering delivery</strong>.</p>
-        <a class="btn btn-primary" href="#consultation">Send a quick query</a>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#consultation">Send a quick query</a>
+          <span class="hero-or" aria-hidden="true">or</span>
+          <button type="button" class="btn btn-ghost js-open-booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">Book a short consultation</button>
+        </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
         <div class="term">
@@ -252,23 +256,17 @@
       </form>
       <p class="contact-alt">
         Prefer a live call?
-        <button type="button" class="text-link" id="open-booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">Book a short consultation</button>
+        <button type="button" class="text-link js-open-booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">Book a short consultation</button>
       </p>
-      <p class="contact-alt contact-alt-quiet">Or email <a href="mailto:hello@hardencode.com">hello@hardencode.com</a></p>
     </div>
   </section>
 
 </main>
 
-<dialog class="booking-modal" id="booking-modal" aria-labelledby="booking-title">
-  <div class="booking-modal-inner">
-    <div class="booking-modal-head">
-      <h2 id="booking-title">Book a short consultation</h2>
-      <button type="button" class="booking-close" id="close-booking" aria-label="Close booking">Close</button>
-    </div>
-    <div class="booking" id="booking">
-      <noscript><p>The booking calendar needs JavaScript. Email <a href="mailto:hello@hardencode.com">hello@hardencode.com</a> instead.</p></noscript>
-    </div>
+<dialog class="booking-modal" id="booking-modal" aria-label="Book a short consultation">
+  <button type="button" class="booking-close" id="close-booking" aria-label="Close booking">&times;</button>
+  <div class="booking" id="booking">
+    <noscript><p>The booking calendar needs JavaScript. Email <a href="mailto:hello@hardencode.com">hello@hardencode.com</a> instead.</p></noscript>
   </div>
 </dialog>
 

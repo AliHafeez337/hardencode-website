@@ -93,17 +93,27 @@
   }
 
   var modal = document.getElementById("booking-modal");
-  var openBtn = document.getElementById("open-booking");
+  var openBtns = document.querySelectorAll(".js-open-booking");
   var closeBtn = document.getElementById("close-booking");
   var booking = document.getElementById("booking");
   var loaded = false;
 
+  function bookingUrl() {
+    for (var i = 0; i < openBtns.length; i++) {
+      var url = openBtns[i].getAttribute("data-koalendar-url");
+      if (url && url.indexOf("http") === 0) {
+        return url;
+      }
+    }
+    return "";
+  }
+
   function loadBooking() {
-    if (loaded || !booking || !openBtn) {
+    if (loaded || !booking) {
       return;
     }
-    var url = openBtn.getAttribute("data-koalendar-url");
-    if (!url || url.indexOf("http") !== 0) {
+    var url = bookingUrl();
+    if (!url) {
       return;
     }
     var frame = document.createElement("iframe");
@@ -138,8 +148,8 @@
     }
   }
 
-  if (openBtn) {
-    openBtn.addEventListener("click", openBooking);
+  for (var i = 0; i < openBtns.length; i++) {
+    openBtns[i].addEventListener("click", openBooking);
   }
   if (closeBtn) {
     closeBtn.addEventListener("click", closeBooking);
