@@ -37,7 +37,7 @@
   font-family: "JetBrains Mono";
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
+  font-display: optional;
   src: url("/fonts/jetbrains-mono-v24-latin-700.woff2") format("woff2");
 }
 
@@ -49,6 +49,8 @@
   --muted: #94a3b8;
   --blue: #3b82f6;
   --blue-bright: #60a5fa;
+  --blue-deep: #2563eb;
+  --blue-ink: #1d4ed8;
   --green: #22c55e;
   --border: #334155;
   --font-heading: "Space Grotesk", "Segoe UI", Arial, sans-serif;
@@ -82,11 +84,11 @@ h1, h2, h3 {
 }
 
 a {
-  color: var(--blue);
+  color: var(--blue-bright);
 }
 
 a:hover {
-  color: var(--blue-bright);
+  color: #93c5fd;
 }
 
 strong {
@@ -100,7 +102,7 @@ strong {
 }
 
 .container-narrow {
-  max-width: 44rem;
+  max-width: 36rem;
 }
 
 .logo {
@@ -119,7 +121,7 @@ strong {
 .logo-en {
   font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--blue);
+  color: var(--blue-bright);
 }
 
 .logo-dot {
@@ -170,8 +172,8 @@ strong {
 }
 
 .nav-links .nav-cta {
-  color: var(--blue);
-  border: 1px solid var(--blue);
+  color: var(--blue-bright);
+  border: 1px solid var(--blue-bright);
   border-radius: 6px;
   padding: 0.35rem 0.9rem;
 }
@@ -223,7 +225,11 @@ strong {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
   gap: 3rem;
-  align-items: center;
+  align-items: start;
+}
+
+.hero-visual {
+  min-height: 17.5rem;
 }
 
 .term {
@@ -234,6 +240,7 @@ strong {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
   font-family: var(--font-mono);
   font-size: 0.82rem;
+  min-height: 17.5rem;
 }
 
 .term-bar {
@@ -312,7 +319,7 @@ strong {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 0.85rem;
-  color: var(--blue);
+  color: var(--blue-bright);
   letter-spacing: 0.08em;
   margin-bottom: 1.25rem;
 }
@@ -321,6 +328,8 @@ strong {
   font-size: clamp(2.3rem, 6vw, 4rem);
   color: var(--offwhite);
   margin-bottom: 1.25rem;
+  /* Reserve line boxes so Space Grotesk swap does not shove the terminal */
+  min-height: 2.5em;
 }
 
 .hero-sub {
@@ -346,8 +355,8 @@ strong {
 }
 
 .btn-primary {
-  background: var(--blue);
-  color: var(--offwhite);
+  background: var(--blue-deep);
+  color: #fff;
 }
 
 .btn-primary:hover {
@@ -363,6 +372,33 @@ strong {
 .btn-ghost:hover {
   border-color: var(--blue-bright);
   color: var(--blue-bright);
+}
+
+.btn-block {
+  width: 100%;
+  text-align: center;
+  border: 0;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.text-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--blue-bright);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.text-link:hover {
+  color: #93c5fd;
 }
 
 .banner {
@@ -385,7 +421,7 @@ strong {
 }
 
 .banner .banner-tail {
-  color: var(--blue);
+  color: var(--blue-bright);
 }
 
 section h2 {
@@ -417,7 +453,7 @@ section h2 {
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--blue);
+  color: var(--blue-bright);
   margin-bottom: 0.9rem;
 }
 
@@ -454,7 +490,7 @@ section h2 {
   content: "\203A";
   position: absolute;
   left: 0;
-  color: var(--blue);
+  color: var(--blue-bright);
   font-weight: 700;
 }
 
@@ -470,6 +506,14 @@ section h2 {
 
 .proof h2 {
   color: var(--navy);
+}
+
+.proof a {
+  color: var(--blue-ink);
+}
+
+.proof a:hover {
+  color: #1e40af;
 }
 
 .proof-grid {
@@ -579,34 +623,149 @@ section h2 {
   max-width: 36rem;
 }
 
-.contact-body {
+.query-form {
+  position: relative;
+  text-align: left;
+  margin: 0 auto;
+}
+
+.field {
+  margin-bottom: 1.1rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: var(--muted);
-  max-width: 36rem;
-  margin: 0 auto 2rem;
-  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
 }
 
-.contact-body strong {
-  color: var(--light);
-}
-
-.booking {
-  margin: 2rem auto 0;
-  max-width: 52rem;
-}
-
-.booking iframe {
+.field input,
+.field textarea {
   width: 100%;
-  height: 640px;
+  font: inherit;
+  color: var(--offwhite);
+  background: var(--navy);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--slate);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #64748b;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--blue-bright);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-status {
+  min-height: 1.4em;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.form-status-ok {
+  color: var(--green);
+}
+
+.form-status-error {
+  color: #f87171;
 }
 
 .contact-alt {
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.contact-alt-quiet {
+  margin-top: 0.65rem;
+  font-size: 0.88rem;
+}
+
+.booking-modal {
+  border: 0;
+  padding: 0;
+  max-width: min(52rem, calc(100vw - 1.5rem));
+  width: 100%;
+  background: transparent;
+  color: inherit;
+}
+
+.booking-modal::backdrop {
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.booking-modal-inner {
+  background: var(--slate);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.booking-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.booking-modal-head h2 {
+  font-size: 1.1rem;
+  color: var(--offwhite);
+}
+
+.booking-close {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.booking-close:hover {
+  color: var(--offwhite);
+  border-color: var(--blue-bright);
+}
+
+.booking {
+  margin: 0;
+  min-height: 640px;
+  background: var(--navy);
+}
+
+.booking iframe {
+  display: block;
+  width: 100%;
+  height: 640px;
+  border: 0;
+  background: var(--navy);
 }
 
 .footer {
@@ -730,7 +889,15 @@ section h2 {
     padding: 1.5rem;
   }
 
+  .booking {
+    min-height: 560px;
+  }
+
   .booking iframe {
     height: 560px;
+  }
+
+  .booking-modal {
+    max-width: calc(100vw - 1rem);
   }
 }

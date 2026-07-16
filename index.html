@@ -22,6 +22,7 @@
 <meta name="theme-color" content="#0f172a">
 <link rel="preload" href="/fonts/space-grotesk-v22-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/inter-v20-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jetbrains-mono-v24-latin-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles.min.css">
 <script type="application/ld+json">
 {
@@ -97,7 +98,7 @@
         <p class="hero-kicker">pentest &rarr; harden &rarr; ship</p>
         <h1>Pentest your stack.<br>Harden your code.</h1>
         <p class="hero-sub">Hardencode pairs <strong>offensive security insight</strong> with <strong>senior engineering delivery</strong>.</p>
-        <a class="btn btn-primary" href="#consultation">Book a short consultation</a>
+        <a class="btn btn-primary" href="#consultation">Send a quick query</a>
       </div>
       <div class="hero-visual" aria-hidden="true">
         <div class="term">
@@ -226,17 +227,50 @@
   </section>
 
   <section class="contact" id="consultation">
-    <div class="container">
+    <div class="container container-narrow">
       <h2>Ready to harden your stack?</h2>
-      <p class="contact-lead">Book a short consultation.</p>
-      <div class="booking" id="booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">
-        <noscript><p>The booking calendar needs JavaScript. Email <a href="mailto:hello@hardencode.com">hello@hardencode.com</a> instead.</p></noscript>
-      </div>
-      <p class="contact-alt">Prefer email? <a href="mailto:hello@hardencode.com">hello@hardencode.com</a></p>
+      <p class="contact-lead">Send a quick query. No call required.</p>
+      <form class="query-form" id="query-form" action="/api/contact" method="post" novalidate>
+        <div class="hp" aria-hidden="true">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" autocomplete="name" required maxlength="100" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" required maxlength="200" placeholder="you@company.com">
+        </div>
+        <div class="field">
+          <label for="query">Query</label>
+          <textarea id="query" name="query" required maxlength="4000" rows="5" placeholder="What do you need help with?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="query-submit">Send query</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+      <p class="contact-alt">
+        Prefer a live call?
+        <button type="button" class="text-link" id="open-booking" data-koalendar-url="https://koalendar.com/e/security-snapshot-call?embed=true">Book a short consultation</button>
+      </p>
+      <p class="contact-alt contact-alt-quiet">Or email <a href="mailto:hello@hardencode.com">hello@hardencode.com</a></p>
     </div>
   </section>
 
 </main>
+
+<dialog class="booking-modal" id="booking-modal" aria-labelledby="booking-title">
+  <div class="booking-modal-inner">
+    <div class="booking-modal-head">
+      <h2 id="booking-title">Book a short consultation</h2>
+      <button type="button" class="booking-close" id="close-booking" aria-label="Close booking">Close</button>
+    </div>
+    <div class="booking" id="booking">
+      <noscript><p>The booking calendar needs JavaScript. Email <a href="mailto:hello@hardencode.com">hello@hardencode.com</a> instead.</p></noscript>
+    </div>
+  </div>
+</dialog>
 
 <footer class="footer">
   <div class="container footer-inner">

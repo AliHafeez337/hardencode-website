@@ -1,0 +1,149 @@
+/**
+ * POST /api/contact
+ * Same-origin contact form handler. Relays to Resend.
+ *
+ * Cloudflare Pages env (Settings → Environment variables, encrypt):
+ *   RESEND_API_KEY  — from https://resend.com
+ * Optional:
+ *   CONTACT_TO      — default hello@hardencode.com
+ *   CONTACT_FROM    — default Hardencode <onboarding@resend.dev>
+ *                     After verifying hardencode.com in Resend, set e.g.
+ *                     Hardencode <hello@hardencode.com>
+ */
+
+const MAX = { name: 100, email: 200, query: 4000 };
+
+function json(body, status) {
+  return new Response(JSON.stringify(body), {
+    status: status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function isEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= MAX.email;
+}
+
+function stripControls(value) {
+  return String(value).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim();
+}
+
+async function readBody(request) {
+  var type = request.headers.get("content-type") || "";
+  if (type.includes("application/json")) {
+    return await request.json();
+  }
+  if (type.includes("application/x-www-form-urlencoded") || type.includes("multipart/form-data")) {
+    var form = await request.formData();
+    return {
+      name: form.get("name"),
+      email: form.get("email"),
+      query: form.get("query"),
+      company: form.get("company"),
+    };
+  }
+  return null;
+}
+
+export async function onRequestPost(context) {
+  var env = context.env;
+  var request = context.request;
+
+  var data;
+  try {
+    data = await readBody(request);
+  } catch (err) {
+    return json({ ok: false, error: "Invalid request body." }, 400);
+  }
+
+  if (!data || typeof data !== "object") {
+    return json({ ok: false, error: "Unsupported content type." }, 415);
+  }
+
+  // Honeypot: bots fill hidden "company"; real users leave it empty.
+  if (data.company) {
+    return json({ ok: true });
+  }
+
+  var name = stripControls(data.name || "");
+  var email = stripControls(data.email || "").toLowerCase();
+  var query = stripControls(data.query || "");
+
+  if (!name || name.length > MAX.name) {
+    return json({ ok: false, error: "Please enter your name." }, 400);
+  }
+  if (!isEmail(email)) {
+    return json({ ok: false, error: "Please enter a valid email." }, 400);
+  }
+  if (!query || query.length > MAX.query) {
+    return json({ ok: false, error: "Please enter your query." }, 400);
+  }
+
+  var apiKey = env.RESEND_API_KEY;
+  if (!apiKey) {
+    return json({
+      ok: false,
+      error: "Form is not configured yet. Email hello@hardencode.com instead.",
+    }, 503);
+  }
+
+  var to = env.CONTACT_TO || "hello@hardencode.com";
+  var from = env.CONTACT_FROM || "Hardencode <onboarding@resend.dev>";
+  var subject = "Hardencode query from " + name;
+  var text =
+    "Name: " + name + "\n" +
+    "Email: " + email + "\n\n" +
+    query + "\n";
+  var html =
+    "<p><strong>Name:</strong> " + escapeHtml(name) + "</p>" +
+    "<p><strong>Email:</strong> " + escapeHtml(email) + "</p>" +
+    "<p><strong>Query:</strong></p>" +
+    "<p>" + escapeHtml(query).replace(/\n/g, "<br>") + "</p>";
+
+  var resendRes;
+  try {
+    resendRes = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: from,
+        to: [to],
+        reply_to: email,
+        subject: subject,
+        text: text,
+        html: html,
+      }),
+    });
+  } catch (err) {
+    return json({ ok: false, error: "Could not reach the mail service. Try again or email hello@hardencode.com." }, 502);
+  }
+
+  if (!resendRes.ok) {
+    var detail = "";
+    try {
+      detail = await resendRes.text();
+    } catch (e) {}
+    console.error("Resend error", resendRes.status, detail);
+    return json({ ok: false, error: "Could not send your query. Try again or email hello@hardencode.com." }, 502);
+  }
+
+  return json({ ok: true });
+}
+
+export async function onRequestGet() {
+  return json({ ok: false, error: "Method not allowed." }, 405);
+}
