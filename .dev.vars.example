@@ -1,0 +1,6 @@
+# Local-only secrets for `npx wrangler dev` (do not commit the real .dev.vars file).
+# Copy to .dev.vars and paste your Resend key:
+#
+#   copy .dev.vars.example .dev.vars
+#
+RESEND_API_KEY=re_xxxxxxxx

@@ -28,9 +28,11 @@ Order matters: the Worker must be deployed before Cloudflare allows runtime secr
 3. Create a free account at [resend.com](https://resend.com) and create an API key.
 4. In Cloudflare → your Worker → **Settings** → **Variables and Secrets**, add:
    - `RESEND_API_KEY` (Secret)
-   - Optional: `CONTACT_TO` (default `hello@hardencode.com`)
-   - Optional: `CONTACT_FROM` (default `Hardencode <onboarding@resend.dev>`)
 5. Deploy once more so the Worker picks up the secret.
+
+Non-secret defaults (`CONTACT_TO`, `CONTACT_FROM`) live in `wrangler.jsonc` under `vars`. The Resend key is declared there as `secrets.required` and must stay a dashboard/CLI secret — never put it in `wrangler.jsonc`.
+
+For local `wrangler dev`, copy `.dev.vars.example` to `.dev.vars` and paste your key.
 
 Until `RESEND_API_KEY` is set, the form returns a clear error and visitors can still use email or the booking modal.
 
