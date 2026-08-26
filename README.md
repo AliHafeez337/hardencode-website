@@ -8,12 +8,14 @@ The live website for **Hardencode**. Plain HTML, CSS, and a small amount of vani
 |---|---|
 | `index.html` | The single page site: hero, services banner, services, proof, case studies, contact |
 | `privacy.html` | Privacy page, linked only from the footer |
+| `credentials/` | Public certificate copies (CPENT image, Security+ PDF). Linked from the footer. Direct files: `/credentials/cpent.png`, `/credentials/comptia-security-plus.pdf` |
 | `404.html` | Branded not found page |
 | `worker.js` | Worker entry: routes `/api/*`, serves everything else from assets |
 | `functions/api/contact.js` | Contact form handler (`POST /api/contact`) used by the Worker |
 | `wrangler.jsonc` | Cloudflare Workers config (assets + Worker entry) |
-| `styles.min.css`, `script.min.js` | Minified build outputs, what the pages actually load |
+| `styles.min.css`, `script.min.js` | Minified build outputs (`privacy.html` / `404.html` load the CSS file) |
 | `src/styles.css`, `src/script.js` | Readable sources for the two files above |
+| `src/build.mjs` | Minifies assets, inlines CSS into `index.html`, updates the CSP style hash |
 | `src/make-icons.ps1` | Regenerates the favicon, touch icons, and Open Graph image |
 | `fonts/` | Self hosted woff2 files, only the weights actually used |
 | `_headers` | Security headers for static responses |
@@ -65,11 +67,12 @@ For local `wrangler dev`, copy `.dev.vars.example` to `.dev.vars` and paste your
 
 ## Editing
 
-Edit `src/styles.css` or `src/script.js`, then rebuild the minified files:
+Edit `src/styles.css` or `src/script.js`, then rebuild:
 
 ```
-npx esbuild src/styles.css --minify --outfile=styles.min.css
-npx esbuild src/script.js --minify --outfile=script.min.js
+node src/build.mjs
 ```
+
+That minifies CSS/JS, inlines CSS into `index.html` (faster first paint; no render-blocking stylesheet request), and refreshes the `style-src` SHA-256 hash in `_headers`.
 
 Every push to `main` deploys automatically through the Cloudflare Workers Git integration.
