@@ -8,7 +8,7 @@ The live website for **Hardencode**. Plain HTML, CSS, and a small amount of vani
 |---|---|
 | `index.html` | The single page site: hero, services banner, services, proof, case studies, contact |
 | `privacy.html` | Privacy page, linked only from the footer |
-| `credentials/` | Public certificate copies (CPENT image, Security+ PDF). Linked from the footer. Direct files: `/credentials/cpent.png`, `/credentials/comptia-security-plus.pdf` |
+| `credentials/` | Public certificate copies plus a written description of each earned cert. Linked from the footer. Hub: `/credentials/`. Direct files: `/credentials/cpent.png`, `/credentials/comptia-security-plus.pdf` |
 | `404.html` | Branded not found page |
 | `worker.js` | Worker entry: routes `/api/*`, serves everything else from assets |
 | `functions/api/contact.js` | Contact form handler (`POST /api/contact`) used by the Worker |
